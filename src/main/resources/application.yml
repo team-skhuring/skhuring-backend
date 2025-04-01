@@ -12,4 +12,11 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+oauth:
+  google:
+    client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+    client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${OAUTH_GOOGLE_REDIRECT_URI}
+
+
 
