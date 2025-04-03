@@ -1,6 +1,7 @@
 package com.skhuring.mentoring.service;
 
 import com.skhuring.mentoring.dto.AccessTokenDto;
+import com.skhuring.mentoring.dto.GoogleProfileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,17 @@ public class GoogleService {
                 .retrieve()
                 .toEntity(AccessTokenDto.class);
         log.info("Access Token: {}", response.getBody());
+        return response.getBody();
+    }
+
+    public GoogleProfileDto getGoogleProfile(String token) {
+        RestClient restClient = RestClient.create();
+        ResponseEntity<GoogleProfileDto> response = restClient.get()
+                .uri("https://openidconnect.googleapis.com/v1/userinfo")
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .toEntity(GoogleProfileDto.class);
+        log.info("Google Profile: {}", response.getBody());
         return response.getBody();
     }
 }
