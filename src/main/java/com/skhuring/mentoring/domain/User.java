@@ -23,7 +23,7 @@ public class User {
     private String email; //카카오는 이메일이 안된다고 했음 일단 넣어둠
 
     @Column(nullable = false)
-    private String socialType;
+    private SocialType socialType;
 
     @Column(nullable = false, unique = true)
     private String socialId;
