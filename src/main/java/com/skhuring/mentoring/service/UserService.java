@@ -1,30 +1,10 @@
 package com.skhuring.mentoring.service;
 
-import com.skhuring.mentoring.domain.SocialType;
-import com.skhuring.mentoring.domain.User;
-import com.skhuring.mentoring.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@Transactional
 public class UserService {
-    private final UserRepository userRepository;
-
-    public User getMemberBySocialId(String socialId){
-        User user = userRepository.findBySocialId(socialId).orElse(null);
-        return user;
-    }
-    public User createOauth(String socialId, String email, SocialType socialType){
-        User user = User.builder()
-                .email(email)
-                .socialType(socialType)
-                .socialId(socialId)
-                .build();
-        userRepository.save(user);
-        return user;
-    }
-
-
 
 }
