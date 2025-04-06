@@ -42,7 +42,7 @@ public class UserController {
 //       회원가입이 되어있지 않다면 회원가입
         User originalMember = userService.getMemberBySocialId(googleProfileDto.getSub());
         if(originalMember == null){
-            originalMember = userService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE);
+            originalMember = userService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE, googleProfileDto.getName());
         }
 //        회원등록되어있다면 jwttoken발급
         String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail());
@@ -50,6 +50,7 @@ public class UserController {
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", originalMember.getId());
         loginInfo.put("token", jwtToken);
+        loginInfo.put("name", originalMember.getName());
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);
     }
 }
