@@ -15,11 +15,12 @@ public class UserService {
         User user = userRepository.findBySocialId(socialId).orElse(null);
         return user;
     }
-    public User createOauth(String socialId, String email, SocialType socialType){
+    public User createOauth(String socialId, String email, SocialType socialType, String name){
         User user = User.builder()
                 .email(email)
                 .socialType(socialType)
                 .socialId(socialId)
+                .name(name)
                 .build();
         userRepository.save(user);
         return user;
