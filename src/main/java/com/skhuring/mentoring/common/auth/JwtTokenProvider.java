@@ -1,5 +1,6 @@
 package com.skhuring.mentoring.common.auth;
 
+import com.skhuring.mentoring.domain.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,9 +23,10 @@ public class JwtTokenProvider {
         this.SECRET_KEY = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
     }
 
-    public String createToken(String email){
+    public String createToken(String email, Role role) {
 //        claims는 jwt토큰의 payload부분을 의미
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("role", role);
         Date now = new Date();
         String token = Jwts.builder()
                 .setClaims(claims)
