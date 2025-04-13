@@ -1,6 +1,7 @@
 package com.skhuring.mentoring.controller;
 
 import com.skhuring.mentoring.common.auth.JwtTokenProvider;
+import com.skhuring.mentoring.domain.Role;
 import com.skhuring.mentoring.domain.SocialType;
 import com.skhuring.mentoring.domain.User;
 import com.skhuring.mentoring.dto.AccessTokenDto;
@@ -8,7 +9,7 @@ import com.skhuring.mentoring.dto.GoogleProfileDto;
 import com.skhuring.mentoring.dto.RedirectDto;
 import com.skhuring.mentoring.service.GoogleService;
 import com.skhuring.mentoring.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/member")
-
+@Slf4j
 public class UserController {
     private final GoogleService googleService;
     private final UserService userService;
@@ -41,11 +42,12 @@ public class UserController {
        GoogleProfileDto googleProfileDto =  googleService.getGoogleProfile(accessTokenDto.getAccess_token());
 //       회원가입이 되어있지 않다면 회원가입
         User originalMember = userService.getMemberBySocialId(googleProfileDto.getSub());
+        log.info("original member: {}", originalMember);
         if(originalMember == null){
-            originalMember = userService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE, googleProfileDto.getName());
+            originalMember = userService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE, googleProfileDto.getName(), Role.USER);
         }
 //        회원등록되어있다면 jwttoken발급
-        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail());
+        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), Role.USER);
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", originalMember.getId());
