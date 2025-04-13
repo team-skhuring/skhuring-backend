@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AccessTokenDto {
-    private String access_token;
-    private String expires_in;
-    private String scope;
-    private String id_token;
+public class OAuthUserProfileDto {
+    private String sub; //사용자 고유 아이디 subjectId
+    private String email;
+    private String picture;
+    private String name;
 }

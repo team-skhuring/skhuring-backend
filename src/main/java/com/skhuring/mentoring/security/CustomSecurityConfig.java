@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Slf4j
 public class CustomSecurityConfig {
+
     /* security 환경 설정을 위한 Bean
     * security 시스템이 발동 후 가장 먼저 찾아 실행하는 메소드(Bean)
     * security Config 를 전체적으로 설정 */
@@ -41,25 +43,27 @@ public class CustomSecurityConfig {
         /* CSRF(Cross-Site Request Forgery)
         * 신뢰할 수 있는 사용자를 사칭해 웹사이트에 원하지 않는 명령을 보내는 공격
         * 일정 조건이 맞는 사람의 공격에 대한 경로를 없애버림 */
-        http.csrf(
-                config -> config.disable()
-        );
+        http.csrf(AbstractHttpConfigurer::disable);
 
         /* 세션에 상태 저장을 하지 않을 환경 설정 */
-        http.sessionManagement(
-                sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        /* SNS 로그인 라우트 허용 */
+        http.authorizeHttpRequests(authz -> authz
+                .requestMatchers("/user/kakao/**", "/user/google/**").permitAll() // 인증 없이 접근 허용
+                .anyRequest().authenticated()
         );
 
         /* 로그인 처리 설정 */
-        http.formLogin(
-                config -> {
-                    config.loginPage("/user/login");
-                    /* 로그인 성공 시 실행할 코드를 갖는 클래스 */
-                    config.successHandler(new APILoginSuccessHandler());
-                    /* 로그인 실패 시 실행할 코드를 갖는 클래스 */
-                    config.failureHandler(new APILoginFailHandler());
-                }
-        );
+//        http.formLogin(
+//                config -> {
+//                    config.loginPage("/user/login");
+//                    /* 로그인 성공 시 실행할 코드를 갖는 클래스 */
+//                    config.successHandler(new APILoginSuccessHandler());
+//                    /* 로그인 실패 시 실행할 코드를 갖는 클래스 */
+//                    config.failureHandler(new APILoginFailHandler());
+//                }
+//        );
 
         /* JWT 액세스 토큰 체크
         * 요청 토큰을 어디서 체크하고 검증할건지에 대한 설정

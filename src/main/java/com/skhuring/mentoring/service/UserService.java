@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User getMemberBySocialId(String socialId){
+    public User getUserBySocialId(String socialId){
         User user = userRepository.findBySocialId(socialId).orElse(null);
         return user;
     }
+
     public User createOauth(String socialId, String email, SocialType socialType, String name){
         User user = User.builder()
                 .email(email)
