@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a->a.requestMatchers("/member/google/doLogin" , "/oauth2/**").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(a->a.requestMatchers("/member/google/doLogin" , "/oauth2/**", "/connect/**").permitAll().anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

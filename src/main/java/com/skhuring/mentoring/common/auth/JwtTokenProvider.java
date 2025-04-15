@@ -36,7 +36,4 @@ public class JwtTokenProvider {
                 .compact();
         return token;
     }
-
-
-
 }
