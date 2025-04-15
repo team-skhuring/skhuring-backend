@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthUserProfileDto {
-    private String sub; //사용자 고유 아이디 subjectId
+    private String sub; // 사용자 고유 아이디 subjectId
     private String email;
     private String picture;
     private String name;

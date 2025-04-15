@@ -1,11 +1,11 @@
 package com.skhuring.mentoring.controller;
 
-//import com.skhuring.mentoring.common.auth.JwtTokenProvider;
+import com.skhuring.mentoring.domain.Role;
 import com.skhuring.mentoring.domain.SocialType;
-import com.skhuring.mentoring.domain.User;
 import com.skhuring.mentoring.dto.OAuthTokenDto;
 import com.skhuring.mentoring.dto.OAuthUserProfileDto;
 import com.skhuring.mentoring.dto.RedirectDto;
+import com.skhuring.mentoring.dto.UserDto;
 import com.skhuring.mentoring.security.util.JWTUtil;
 import com.skhuring.mentoring.service.GoogleService;
 import com.skhuring.mentoring.service.KakaoService;
@@ -42,12 +42,13 @@ public class UserController {
        // 사용자 정보 얻기
        OAuthUserProfileDto OAuthUserProfileDto =  googleService.getGoogleProfile(OAuthTokenDto.getAccessToken());
        // 회원가입이 되어있지 않다면 회원가입
-        User originalUser = userService.getUserBySocialId(OAuthUserProfileDto.getSub());
+
+        UserDto originalUser = userService.getUserBySocialId(OAuthUserProfileDto.getSub());
         if(originalUser == null){
             originalUser = userService.createOauth(OAuthUserProfileDto.getSub(), OAuthUserProfileDto.getEmail(), SocialType.GOOGLE, OAuthUserProfileDto.getName());
         }
         // 회원등록 되어있다면 jwt token 발급
-        String jwtToken = JWTUtil.generateFromSocialId(originalUser.getSocialId(), originalUser.getSocialType(), 60); // 60분 유효 토큰
+        String jwtToken = JWTUtil.generateFromSocialId(originalUser.getSocialId(), SocialType.valueOf(originalUser.getSocialType().name()), Role.USER);
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", originalUser.getId());
@@ -79,19 +80,19 @@ public class UserController {
         OAuthUserProfileDto profile = kakaoService.getUserProfile(accessToken);
 
         // 회원가입 또는 조회
-        User user = userService.getUserBySocialId(profile.getSub());
-        if (user == null) {
-            user = userService.createOauth(profile.getSub(), profile.getEmail(), SocialType.KAKAO, profile.getName());
+        UserDto userDto = userService.getUserBySocialId(profile.getSub());
+        if (userDto == null) {
+            userDto = userService.createOauth(profile.getSub(), profile.getEmail(), SocialType.KAKAO, profile.getName());
         }
 
         // JWT 토큰 발급
-        String jwtToken = JWTUtil.generateFromSocialId(user.getSocialId(), user.getSocialType(), 60);
+        String jwtToken = JWTUtil.generateFromSocialId(userDto.getSocialId(), SocialType.valueOf(userDto.getSocialType().name()), Role.USER);
 
         // 로그인 정보 응답
         Map<String, Object> loginInfo = new HashMap<>();
-        loginInfo.put("id", user.getId());
+        loginInfo.put("id", userDto.getId());
         loginInfo.put("token", jwtToken);
-        loginInfo.put("name", user.getName());
+        loginInfo.put("name", userDto.getName());
 
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);
     }

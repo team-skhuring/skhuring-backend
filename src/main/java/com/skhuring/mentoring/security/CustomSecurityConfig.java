@@ -1,8 +1,6 @@
 package com.skhuring.mentoring.security;
 
 import com.skhuring.mentoring.security.filter.JWTCheckFilter;
-import com.skhuring.mentoring.security.handler.APILoginFailHandler;
-import com.skhuring.mentoring.security.handler.APILoginSuccessHandler;
 import com.skhuring.mentoring.security.handler.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +18,21 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class CustomSecurityConfig {
 
+    private final JWTCheckFilter jwtCheckFilter;
+
     /* security 환경 설정을 위한 Bean
     * security 시스템이 발동 후 가장 먼저 찾아 실행하는 메소드(Bean)
     * security Config 를 전체적으로 설정 */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
-        log.info("------ Configuring Custom Security Filter Chain ------");
+        log.info("[Configuring Custom Security Filter Chain]");
 
         /* CORS 제약 설정 */
         http.cors(
@@ -50,26 +51,18 @@ public class CustomSecurityConfig {
 
         /* SNS 로그인 라우트 허용 */
         http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/user/kakao/**", "/user/google/**").permitAll() // 인증 없이 접근 허용
+                .requestMatchers(
+                        "/user/kakao/**",
+                        "/user/google/**"
+                ).permitAll() // 인증 없이 접근 허용
                 .anyRequest().authenticated()
         );
-
-        /* 로그인 처리 설정 */
-//        http.formLogin(
-//                config -> {
-//                    config.loginPage("/user/login");
-//                    /* 로그인 성공 시 실행할 코드를 갖는 클래스 */
-//                    config.successHandler(new APILoginSuccessHandler());
-//                    /* 로그인 실패 시 실행할 코드를 갖는 클래스 */
-//                    config.failureHandler(new APILoginFailHandler());
-//                }
-//        );
 
         /* JWT 액세스 토큰 체크
         * 요청 토큰을 어디서 체크하고 검증할건지에 대한 설정
         * 토큰 발급은 APILoginSuccessHandler() 에서 발급
         * 이후 발급된 토큰으로 다음 정보를 요청할 때 토큰의 유효성을 체크하는 환경 */
-        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtCheckFilter, UsernamePasswordAuthenticationFilter.class);
 
         /* 접근 시 발생한 로그인 이외의 모든 예외 처리 (액세스 토큰 오류, 로그인 오류 등) 에 대한 설정 */
         http.exceptionHandling(
@@ -87,7 +80,8 @@ public class CustomSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration(); // 새로운 CorsConfiguration 을 생성 후 규칙을 추가하고 리턴 (정책 설정)
-        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // 모든 아이피(출발 지점)에 대해 응답 허용
+        //configuration.setAllowedOriginPatterns(Arrays.asList("*")); // 모든 아이피(출발 지점)에 대해 응답 허용
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE")); // 해당 요청에만 응답 허용
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // 해당 헤더에 대해서만 응답 허용
         configuration.setAllowCredentials(true); // 서버가 응답할 때 json 을 JS 에서 처리할 수 있게 설정

@@ -13,14 +13,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "user")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    private String email; //카카오는 이메일이 안된다고 했음 일단 넣어둠
+    private String email;
 
     @Column(nullable = false)
     private SocialType socialType;
@@ -28,4 +27,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String socialId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }
