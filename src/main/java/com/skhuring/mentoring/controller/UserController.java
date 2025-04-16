@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
     private final GoogleService googleService;
