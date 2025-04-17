@@ -25,10 +25,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false)
+    @Column(name = "social_type", nullable = false)
     private SocialType socialType;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "social_id", nullable = false, unique = true)
     private String socialId;
+
+    @Column(name = "profile_image")
+    private String profileImage;
 
 }
