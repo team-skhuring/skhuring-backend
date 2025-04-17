@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Table(name = "chat_message")
-public class ChatMessage {
+public class ChatMessage extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +25,10 @@ public class ChatMessage {
     @JoinColumn(name = "send_user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false, length = 500)
+    private String content;
+
     @Column(nullable = false)
     private MessageType messageType;
-
 
 }
