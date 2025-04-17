@@ -1,6 +1,6 @@
 package com.skhuring.mentoring.service;
 
-import com.skhuring.mentoring.dto.AccessTokenDto;
+import com.skhuring.mentoring.dto.OAuthTokenDto;
 import com.skhuring.mentoring.dto.GoogleProfileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class GoogleService {
     @Value("${oauth.google.redirect-uri}")
     private String googleRedirectUri;
 
-    public AccessTokenDto getAccessToken(String code) {
+    public OAuthTokenDto getAccessToken(String code) {
         RestClient restClient = RestClient.create();
 
 //        MultiValueMap을 통해 자동으로 form-data형식으로 body 조립 가능
@@ -32,12 +32,12 @@ public class GoogleService {
         params.add("redirect_uri", googleRedirectUri);
         params.add("grant_type", "authorization_code");
 
-        ResponseEntity<AccessTokenDto> response =  restClient.post()
+        ResponseEntity<OAuthTokenDto> response =  restClient.post()
                 .uri("https://oauth2.googleapis.com/token")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(params)
                 .retrieve()
-                .toEntity(AccessTokenDto.class);
+                .toEntity(OAuthTokenDto.class);
         log.info("Access Token: {}", response.getBody());
         return response.getBody();
     }
