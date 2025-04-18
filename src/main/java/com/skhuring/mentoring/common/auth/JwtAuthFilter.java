@@ -1,6 +1,7 @@
 package com.skhuring.mentoring.common.auth;
 
 
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,10 @@ import java.util.List;
 public class JwtAuthFilter extends GenericFilter{
     @Value("${jwt.secret}")
     private String secret;
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -41,7 +48,7 @@ public class JwtAuthFilter extends GenericFilter{
                 String jwtToken = token.substring(7);
 //            token 검증 및 claims(payload) 추출
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(secret)
+                        .setSigningKey(getSigningKey())
                         .build()
                         .parseClaimsJws(jwtToken)
                         .getBody();
