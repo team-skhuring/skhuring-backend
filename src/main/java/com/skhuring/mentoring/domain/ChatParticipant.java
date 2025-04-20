@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Table(name = "chat_participant")
-public class ChatParticipant {
+public class ChatParticipant extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +24,9 @@ public class ChatParticipant {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
+
+    @Enumerated(EnumType.STRING)
+    private ChatRole chatRole; // 멘토/멘티 역할 구분
 
     private String content;
 
