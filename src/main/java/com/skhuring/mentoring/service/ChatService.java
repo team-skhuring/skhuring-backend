@@ -51,7 +51,7 @@ public class ChatService {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("잘못된 카테고리입니다.");
         }
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()-> new EntityNotFoundException("user cannot be found"));
+        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()-> new EntityNotFoundException("user cannot be found"));
 //        채팅방 생성
         ChatRoom chatRoom = ChatRoom.builder()
                 .title(request.getTitle())
@@ -91,7 +91,7 @@ public class ChatService {
     }
 
     public void addParticipantToChatRoom(JoinChatRoomReqDto request) {
-        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
         ChatRoom chatRoom = chatRoomRepository.findById(Long.valueOf(request.getRoomId()))
