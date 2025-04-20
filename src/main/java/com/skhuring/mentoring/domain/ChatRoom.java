@@ -33,6 +33,10 @@ public class ChatRoom extends BaseTimeEntity {
 
     private static final int MAX_PARTICIPANTS = 4;
 
+    private String creator_name;
+
+    private int currentMemberCount;
+
     private boolean mentor_status;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
@@ -41,6 +45,8 @@ public class ChatRoom extends BaseTimeEntity {
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
     private List<ChatMessage> chatMessageList = new ArrayList<>();
 
-
+    public void checkMentorJoined() {
+        this.mentor_status = true;
+    }
 
 }

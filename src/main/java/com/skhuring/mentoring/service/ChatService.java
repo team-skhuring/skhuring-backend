@@ -2,7 +2,9 @@ package com.skhuring.mentoring.service;
 
 import com.skhuring.mentoring.domain.*;
 import com.skhuring.mentoring.dto.ChatMessageReqDto;
+import com.skhuring.mentoring.dto.ChatRoomListResDto;
 import com.skhuring.mentoring.dto.CreateChatRoomReqDto;
+import com.skhuring.mentoring.dto.JoinChatRoomReqDto;
 import com.skhuring.mentoring.repository.ChatMessageRepository;
 import com.skhuring.mentoring.repository.ChatParticipantRepository;
 import com.skhuring.mentoring.repository.ChatRoomRepository;
@@ -12,6 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -51,7 +56,10 @@ public class ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .title(request.getTitle())
                 .category(categoryEnum)
+                .creator_name(user.getName())
                 .anonymous(request.isAnonymous())
+                .currentMemberCount(1)
+                .mentor_status(false)
                 .build();
         chatRoomRepository.save(chatRoom);
 //        채팅방 개설자는 바로 채팅방 참여시킴
@@ -63,4 +71,45 @@ public class ChatService {
     }
 
 
+    public List<ChatRoomListResDto> getChatRoomsList() {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
+
+        List<ChatRoomListResDto> dtos = new ArrayList<>();
+        for (ChatRoom chatRoom : chatRoomList) {
+            ChatRoomListResDto dto = ChatRoomListResDto.builder()
+                    .roomId(chatRoom.getId())
+                    .title(chatRoom.getTitle())
+                    .creatorName(chatRoom.getCreator_name())
+                    .category(String.valueOf(chatRoom.getCategory()))
+                    .isFull(false)
+                    .mentor_status(chatRoom.isMentor_status())
+                    .currentMemberCount(chatRoom.getCurrentMemberCount())
+                    .build();
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    public void addParticipantToChatRoom(JoinChatRoomReqDto request) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        ChatRoom chatRoom = chatRoomRepository.findById(Long.valueOf(request.getRoomId()))
+                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+
+        // 참가자 추가
+        ChatParticipant participant = ChatParticipant.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .build();
+        chatParticipantRepository.save(participant);
+
+        // 멘토일 경우 채팅방 상태 업데이트
+        if ("MENTOR".equalsIgnoreCase(request.getRole()) && !chatRoom.isMentor_status()) {
+            chatRoom.checkMentorJoined();
+            chatRoomRepository.save(chatRoom);
+        }
+
+
+    }
 }
