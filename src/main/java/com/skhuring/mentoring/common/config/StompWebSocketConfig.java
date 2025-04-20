@@ -2,6 +2,7 @@ package com.skhuring.mentoring.common.config;
 
 import com.skhuring.mentoring.common.auth.StompHandler;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,6 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 @AllArgsConstructor
+@Slf4j
 public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompHandler stompHandler;
@@ -20,6 +22,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/connect")
                 .setAllowedOrigins("http://localhost:5173")
                 .withSockJS();
+
 
     }
     @Override
