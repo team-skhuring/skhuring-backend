@@ -1,11 +1,13 @@
 package com.skhuring.mentoring.controller;
 
+import com.skhuring.mentoring.dto.ChatMessageDto;
 import com.skhuring.mentoring.dto.ChatRoomListResDto;
 import com.skhuring.mentoring.dto.CreateChatRoomReqDto;
 import com.skhuring.mentoring.dto.JoinChatRoomReqDto;
 import com.skhuring.mentoring.service.ChatService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,13 @@ public class ChatController {
         String role = requestDto.getRole();
         chatService.addParticipantToChatRoom(requestDto);
         return ResponseEntity.ok().build();
+    }
+
+//    이전 메시지 조회
+    @GetMapping("/history/{roomId}")
+    public ResponseEntity<?> getChatRoomHistory(@PathVariable String roomId) {
+        List<ChatMessageDto> chatMessageDtos = chatService.getChatHistory(roomId);
+        return new ResponseEntity<>(chatMessageDtos, HttpStatus.OK);
     }
 
 

@@ -47,7 +47,7 @@ public class UserController {
             originalMember = userService.createOauth(googleProfileDto.getSub(), googleProfileDto.getEmail(), SocialType.GOOGLE, googleProfileDto.getName(), Role.USER);
         }
 //        회원등록되어있다면 jwttoken발급
-        String jwtToken = jwtTokenProvider.createToken(originalMember.getEmail(), Role.USER);
+        String jwtToken = jwtTokenProvider.createToken(originalMember.getSocialId(), Role.USER);
 
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("id", originalMember.getId());
