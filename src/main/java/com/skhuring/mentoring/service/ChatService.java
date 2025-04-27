@@ -1,7 +1,7 @@
 package com.skhuring.mentoring.service;
 
 import com.skhuring.mentoring.domain.*;
-import com.skhuring.mentoring.dto.ChatMessageReqDto;
+import com.skhuring.mentoring.dto.ChatMessageDto;
 import com.skhuring.mentoring.dto.ChatRoomListResDto;
 import com.skhuring.mentoring.dto.CreateChatRoomReqDto;
 import com.skhuring.mentoring.dto.JoinChatRoomReqDto;
@@ -27,7 +27,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatParticipantRepository chatParticipantRepository;
 
-    public void saveMessage(Long roomId, ChatMessageReqDto chatMessageReqDto) {
+    public void saveMessage(Long roomId, ChatMessageDto chatMessageReqDto) {
 //        채팅방조회
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(()-> new EntityNotFoundException("room cannot be found"));
 //        보낸사람조회
@@ -111,5 +111,35 @@ public class ChatService {
         }
 
 
+    }
+
+    public List<ChatMessageDto> getChatHistory(String roomId) {
+//        내가 해당 채팅방의 참여자가 아닐경우 에러
+        ChatRoom chatRoom = chatRoomRepository.findById(Long.valueOf(roomId))
+                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+      /*
+        List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
+        boolean check = false;
+        for (ChatParticipant c : chatParticipants) {
+            if(c.getUser().equals(user)) {
+                check = true;
+            }
+        }
+        if (!check) throw new IllegalArgumentException("본인이 속하지 않은 채팅방입니다");
+       */
+//        특정 room에 대한 메시지 조회
+        List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomOrderByCreateTime(chatRoom);
+        List<ChatMessageDto> dtos = new ArrayList<>();
+        for(ChatMessage c : chatMessages) {
+            ChatMessageDto chatMessageDto = ChatMessageDto.builder()
+                    .content(c.getContent())
+                    .sender(c.getUser().getName())
+                    .build();
+            dtos.add(chatMessageDto);
+        }
+        return dtos;
     }
 }
