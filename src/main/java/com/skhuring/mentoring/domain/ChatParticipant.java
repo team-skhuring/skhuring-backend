@@ -28,7 +28,4 @@ public class ChatParticipant extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ChatRole chatRole; // 멘토/멘티 역할 구분
 
-    private String content;
-
-
 }

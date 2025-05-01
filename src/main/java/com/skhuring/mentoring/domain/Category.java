@@ -5,8 +5,10 @@ package com.skhuring.mentoring.domain;
  */
 public enum Category {
     IT,
+    언어,
     진로,
-    패션,
-    창업,
+    경제,
+    성적,
+    나눔,
 
 }
