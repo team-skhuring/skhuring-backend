@@ -1,9 +1,6 @@
 package com.skhuring.mentoring.controller;
 
-import com.skhuring.mentoring.dto.ChatMessageDto;
-import com.skhuring.mentoring.dto.ChatRoomListResDto;
-import com.skhuring.mentoring.dto.CreateChatRoomReqDto;
-import com.skhuring.mentoring.dto.JoinChatRoomReqDto;
+import com.skhuring.mentoring.dto.*;
 import com.skhuring.mentoring.service.ChatService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +23,8 @@ public class ChatController {
     public ResponseEntity<?> createChatRoom(@RequestBody CreateChatRoomReqDto request) {
         log.info(SecurityContextHolder.getContext().getAuthentication().getName());
         try {
-            chatService.createRoom(request);
-            return ResponseEntity.ok().build();
+            Long roomId = chatService.createRoom(request);
+            return ResponseEntity.ok(roomId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -38,6 +35,13 @@ public class ChatController {
         List<ChatRoomListResDto> chatRooms =  chatService.getChatRoomsList();
         return ResponseEntity.ok().body(chatRooms);
     }
+
+//    내가 참여한 채팅방 목록 조회
+@GetMapping("/rooms/me")
+public ResponseEntity<?> getChatRoomsMe() {
+        List<MyChatRoomListResDto> myChatRooms = chatService.getMyChatRoom();
+        return ResponseEntity.ok().body(myChatRooms);
+}
 
 //    채팅방 참여
     @PostMapping("/room/join")

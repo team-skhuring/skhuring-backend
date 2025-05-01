@@ -1,10 +1,7 @@
 package com.skhuring.mentoring.service;
 
 import com.skhuring.mentoring.domain.*;
-import com.skhuring.mentoring.dto.ChatMessageDto;
-import com.skhuring.mentoring.dto.ChatRoomListResDto;
-import com.skhuring.mentoring.dto.CreateChatRoomReqDto;
-import com.skhuring.mentoring.dto.JoinChatRoomReqDto;
+import com.skhuring.mentoring.dto.*;
 import com.skhuring.mentoring.repository.ChatMessageRepository;
 import com.skhuring.mentoring.repository.ChatParticipantRepository;
 import com.skhuring.mentoring.repository.ChatRoomRepository;
@@ -17,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,7 +42,7 @@ public class ChatService {
 
     }
 
-    public void createRoom(CreateChatRoomReqDto request) {
+    public Long createRoom(CreateChatRoomReqDto request) {
         Category categoryEnum;
         try {
             categoryEnum = Category.valueOf(request.getCategory().toUpperCase());
@@ -68,6 +66,8 @@ public class ChatService {
                 .user(user)
                 .build();
         chatParticipantRepository.save(chatParticipant);
+
+        return chatRoom.getId();
     }
 
 
@@ -97,10 +97,16 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(Long.valueOf(request.getRoomId()))
                 .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
 
+        boolean alreadyParticipant = chatParticipantRepository.existsByChatRoomAndUser(chatRoom, user);
+        if (alreadyParticipant) {
+            throw new IllegalStateException("이미 채팅방에 참가한 사용자입니다.");
+        }
+
         // 참가자 추가
         ChatParticipant participant = ChatParticipant.builder()
                 .chatRoom(chatRoom)
                 .user(user)
+                .chatRole(ChatRole.valueOf(request.getRole()))
                 .build();
         chatParticipantRepository.save(participant);
 
@@ -141,5 +147,16 @@ public class ChatService {
             dtos.add(chatMessageDto);
         }
         return dtos;
+    }
+
+    public List<MyChatRoomListResDto> getMyChatRoom() {
+        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        List<ChatParticipant> participants = chatParticipantRepository.findAllByUser(user);
+
+        return participants.stream()
+                .map(participant -> MyChatRoomListResDto.from(participant.getChatRoom()))
+                .collect(Collectors.toList());
+
     }
 }
