@@ -64,6 +64,7 @@ public class ChatService {
         ChatParticipant chatParticipant = ChatParticipant.builder()
                 .chatRoom(chatRoom)
                 .user(user)
+                .chatRole(ChatRole.valueOf("MENTEE"))
                 .build();
         chatParticipantRepository.save(chatParticipant);
 
@@ -101,6 +102,9 @@ public class ChatService {
         if (alreadyParticipant) {
             throw new IllegalStateException("이미 채팅방에 참가한 사용자입니다.");
         }
+
+        chatRoom.increaseCurrentMemberCount();
+        chatRoomRepository.save(chatRoom);
 
         // 참가자 추가
         ChatParticipant participant = ChatParticipant.builder()

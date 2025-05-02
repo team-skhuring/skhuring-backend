@@ -49,4 +49,8 @@ public class ChatRoom extends BaseTimeEntity {
         this.mentor_status = true;
     }
 
+    public void increaseCurrentMemberCount() {
+        this.currentMemberCount++;
+    }
+
 }
