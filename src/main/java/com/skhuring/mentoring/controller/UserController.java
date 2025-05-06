@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -90,4 +91,20 @@ public class UserController {
 
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);
     }
+
+    /* id 기반 로그인 유저 정보 가져오기 */
+    @GetMapping("/loginUserInfo")
+    public ResponseEntity<Map<String, Object>> loginUserInfo(@RequestParam("id") long id) {
+        Map<String, Object> result = new HashMap<>();
+        Optional<User> loginUser = userService.getLoginInfo(id);
+
+        if (loginUser.isEmpty()) {
+            result.put("error", "User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        }
+
+        result.put("loginUser", loginUser);
+        return ResponseEntity.ok(result);
+    }
+
 }

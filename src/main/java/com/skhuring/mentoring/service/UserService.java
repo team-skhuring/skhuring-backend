@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -36,5 +38,10 @@ public class UserService {
                 .build();
         userRepository.save(user);
         return user;
+    }
+
+    /* id 기반 로그인 유저 정보 가져오기 */
+    public Optional<User> getLoginInfo(long id) {
+        return userRepository.findById(id);
     }
 }
