@@ -19,4 +19,8 @@ public class Memo {
 
     private String content;
 
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
 }
