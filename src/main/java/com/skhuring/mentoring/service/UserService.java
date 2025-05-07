@@ -4,6 +4,7 @@ import com.skhuring.mentoring.domain.Role;
 import com.skhuring.mentoring.domain.SocialType;
 import com.skhuring.mentoring.domain.User;
 import com.skhuring.mentoring.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Optional;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
