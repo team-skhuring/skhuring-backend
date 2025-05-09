@@ -94,9 +94,9 @@ public class UserController {
 
     /* id 기반 로그인 유저 정보 가져오기 */
     @GetMapping("/loginUserInfo")
-    public ResponseEntity<Map<String, Object>> loginUserInfo(@RequestParam("id") long id) {
+    public ResponseEntity<Map<String, Object>> loginUserInfo(@RequestParam("userId") long userId) {
         Map<String, Object> result = new HashMap<>();
-        Optional<User> loginUser = userService.getLoginInfo(id);
+        Optional<User> loginUser = userService.getLoginInfo(userId);
 
         if (loginUser.isEmpty()) {
             result.put("error", "User not found");

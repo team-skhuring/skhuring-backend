@@ -15,7 +15,10 @@ public class Memo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long chat_room_id;
+    @Column(name = "chat_room_id")
+    private Long chatRoomId;
+
+    private String title;
 
     private String content;
 

@@ -43,7 +43,7 @@ public class UserService {
     }
 
     /* id 기반 로그인 유저 정보 가져오기 */
-    public Optional<User> getLoginInfo(long id) {
-        return userRepository.findById(id);
+    public Optional<User> getLoginInfo(long userId) {
+        return userRepository.findById(userId);
     }
 }
