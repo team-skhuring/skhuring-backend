@@ -1,7 +1,6 @@
 package com.skhuring.mentoring.repository;
 
 import com.skhuring.mentoring.domain.Memo;
-import com.skhuring.mentoring.dto.MemoResDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

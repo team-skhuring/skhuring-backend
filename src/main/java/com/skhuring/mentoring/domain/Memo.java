@@ -26,4 +26,9 @@ public class Memo {
     @JoinColumn(name = "userId")
     private User user;
 
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }

@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemoResDto {
+public class MemoDto {
+    private Long id;
     private String title;
     private String content;
 }
