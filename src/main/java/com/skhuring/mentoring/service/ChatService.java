@@ -54,7 +54,7 @@ public class ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .title(request.getTitle())
                 .category(categoryEnum)
-                .creator_name(user.getName())
+                .creator(user)
                 .anonymous(request.isAnonymous())
                 .currentMemberCount(1)
                 .mentor_status(false)
@@ -77,16 +77,19 @@ public class ChatService {
 
         List<ChatRoomListResDto> dtos = new ArrayList<>();
         for (ChatRoom chatRoom : chatRoomList) {
-            ChatRoomListResDto dto = ChatRoomListResDto.builder()
-                    .roomId(chatRoom.getId())
-                    .title(chatRoom.getTitle())
-                    .creatorName(chatRoom.getCreator_name())
-                    .category(String.valueOf(chatRoom.getCategory()))
-                    .isFull(false)
-                    .mentor_status(chatRoom.isMentor_status())
-                    .currentMemberCount(chatRoom.getCurrentMemberCount())
-                    .build();
-            dtos.add(dto);
+            // "CLOSED" 상태인 채팅방은 제외
+            if (!"CLOSED".equals(chatRoom.getRoom_status())) {
+                ChatRoomListResDto dto = ChatRoomListResDto.builder()
+                        .roomId(chatRoom.getId())
+                        .title(chatRoom.getTitle())
+                        .creatorName(chatRoom.getCreator().getName())
+                        .category(String.valueOf(chatRoom.getCategory()))
+                        .isFull(false)
+                        .mentor_status(chatRoom.isMentor_status())
+                        .currentMemberCount(chatRoom.getCurrentMemberCount())
+                        .build();
+                dtos.add(dto);
+            }
         }
         return dtos;
     }
@@ -156,11 +159,58 @@ public class ChatService {
     public List<MyChatRoomListResDto> getMyChatRoom() {
         User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 사용자가 참여한 채팅방 목록을 가져옴
         List<ChatParticipant> participants = chatParticipantRepository.findAllByUser(user);
 
         return participants.stream()
-                .map(participant -> MyChatRoomListResDto.from(participant.getChatRoom()))
+                .map(participant -> participant.getChatRoom())
+                .filter(chatRoom -> !"CLOSED".equals(chatRoom.getRoom_status()))  // "CLOSED" 상태인 채팅방 제외
+                .map(chatRoom -> MyChatRoomListResDto.from(chatRoom, chatRoom.getCreator().getId().equals(user.getId())))
                 .collect(Collectors.toList());
-
     }
+
+
+    public void closeChatRoom(Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+
+        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        if (!chatRoom.getCreator().getId().equals(user.getId())) {
+            throw new IllegalStateException("방 생성자만 종료할 수 있습니다.");
+        }
+
+        // 종료 처리
+        chatRoom.closeRoom();
+        chatRoomRepository.deleteById(roomId);
+    }
+
+    public void leaveChatRoom(Long roomId) {
+        // 채팅방 찾기
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+
+        // 현재 사용자 찾기
+        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 해당 채팅방에 사용자가 참여하고 있는지 확인
+        ChatParticipant participant = chatParticipantRepository.findByChatRoomAndUser(chatRoom, user)
+                .orElseThrow(() -> new IllegalStateException("이 채팅방에 참여하고 있지 않습니다."));
+
+        // 나가기
+        chatParticipantRepository.delete(participant);
+        chatRoom.decreaseCurrentMemberCount();  // 현재 참여자 수 감소
+
+        // 만약 채팅방에 참여자가 없으면 채팅방을 종료 상태로 변경
+        if (chatRoom.getCurrentMemberCount() == 0) {
+            chatRoom.closeRoom();
+            chatRoomRepository.deleteById(roomId);
+        } else {
+            chatRoomRepository.save(chatRoom); // 참여자 수를 업데이트한 후 저장
+        }
+    }
+
 }
