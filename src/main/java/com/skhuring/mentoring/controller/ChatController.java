@@ -4,6 +4,7 @@ import com.skhuring.mentoring.dto.*;
 import com.skhuring.mentoring.service.ChatService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,6 +57,22 @@ public ResponseEntity<?> getChatRoomsMe() {
     public ResponseEntity<?> getChatRoomHistory(@PathVariable String roomId) {
         List<ChatMessageDto> chatMessageDtos = chatService.getChatHistory(roomId);
         return new ResponseEntity<>(chatMessageDtos, HttpStatus.OK);
+    }
+//    채팅방 종료 - 방장
+    @PostMapping("/close/{roomId}")
+    public ResponseEntity<?> closeChatRoom(@PathVariable @NotNull String roomId) {
+        chatService.closeChatRoom(Long.valueOf(roomId));
+        return ResponseEntity.ok().body("채팅방이 종료되었습니다.");
+    }
+//     채팅방 나가기 - 일반 사용자
+    @PostMapping("/leave/{roomId}")
+    public ResponseEntity<String> leaveChatRoom(@PathVariable String roomId) {
+        try {
+            chatService.leaveChatRoom(Long.valueOf(roomId));
+            return ResponseEntity.ok("채팅방을 성공적으로 나갔습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
 

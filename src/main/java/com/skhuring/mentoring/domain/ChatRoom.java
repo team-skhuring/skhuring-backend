@@ -33,11 +33,15 @@ public class ChatRoom extends BaseTimeEntity {
 
     private static final int MAX_PARTICIPANTS = 4;
 
-    private String creator_name;
+    @ManyToOne(fetch = FetchType.LAZY)  // ManyToOne 관계 설정
+    @JoinColumn(name = "creator_id", nullable = false) // creator_id 외래키 설정
+    private User creator;
 
     private int currentMemberCount;
 
     private boolean mentor_status;
+
+    private String room_status; // "ACTIVE", "CLOSED"
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
     private List<ChatParticipant> chatParticipantList = new ArrayList<>();
@@ -53,4 +57,11 @@ public class ChatRoom extends BaseTimeEntity {
         this.currentMemberCount++;
     }
 
+    public void decreaseCurrentMemberCount() {
+        this.currentMemberCount--;
+    }
+
+    public void closeRoom() {
+        this.room_status = "CLOSED";
+    }
 }
