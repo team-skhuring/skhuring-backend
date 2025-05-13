@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemoDto {
+public class MemoReqDto {
     private Long id;
+    private Long chatRoomId;
     private String title;
     private String content;
+    private Long userId;
 }
