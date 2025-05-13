@@ -2,6 +2,8 @@ package com.skhuring.mentoring.service;
 
 import com.skhuring.mentoring.dto.OAuthTokenDto;
 import com.skhuring.mentoring.dto.GoogleProfileDto;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+
 @Slf4j
 @Service
+@Transactional
 public class GoogleService {
     @Value("${oauth.google.client-id}")
     private String googleClientId;

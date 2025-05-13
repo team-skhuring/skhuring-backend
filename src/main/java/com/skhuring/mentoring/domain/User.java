@@ -20,7 +20,7 @@ public class User {
 
     private String name;
 
-    private String email; //카카오는 이메일이 안된다고 했음 일단 넣어둠
+    private String email; // 카카오는 받아오지 않음
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -33,5 +33,7 @@ public class User {
 
     @Column(name = "profile_image")
     private String profileImage;
+
+    private int point;
 
 }
