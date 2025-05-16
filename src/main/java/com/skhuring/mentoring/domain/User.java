@@ -36,4 +36,8 @@ public class User {
 
     private int point;
 
+    public void update(String name, String profileImage) {
+        this.name = name;
+        this.profileImage = profileImage;
+    }
 }
