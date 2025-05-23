@@ -15,8 +15,20 @@ public class Memo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long chat_room_id;
+    @Column(name = "chat_room_id")
+    private Long chatRoomId;
+
+    private String title;
 
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
 }

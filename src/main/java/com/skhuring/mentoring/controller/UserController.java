@@ -4,10 +4,7 @@ import com.skhuring.mentoring.common.auth.JwtTokenProvider;
 import com.skhuring.mentoring.domain.Role;
 import com.skhuring.mentoring.domain.SocialType;
 import com.skhuring.mentoring.domain.User;
-import com.skhuring.mentoring.dto.KakaoProfileDto;
-import com.skhuring.mentoring.dto.OAuthTokenDto;
-import com.skhuring.mentoring.dto.GoogleProfileDto;
-import com.skhuring.mentoring.dto.RedirectDto;
+import com.skhuring.mentoring.dto.*;
 import com.skhuring.mentoring.service.GoogleService;
 import com.skhuring.mentoring.service.KakaoService;
 import com.skhuring.mentoring.service.UserService;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -90,4 +88,31 @@ public class UserController {
 
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);
     }
+
+    /* id 기반 로그인 유저 정보 가져오기 */
+    @GetMapping("/loginUserInfo")
+    public ResponseEntity<Map<String, Object>> loginUserInfo(@RequestParam("userId") long userId) {
+        Map<String, Object> result = new HashMap<>();
+        Optional<UserResDto> loginUser = userService.getLoginInfo(userId);
+
+        if (loginUser.isEmpty()) {
+            result.put("error", "User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        }
+
+        result.put("loginUser", loginUser);
+        return ResponseEntity.ok(result);
+    }
+
+    /* 유저 이름 수정 */
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UserReqDto dto) {
+        try {
+            userService.updateUser(dto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+        }
+    }
+
 }
