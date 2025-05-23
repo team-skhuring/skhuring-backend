@@ -3,6 +3,7 @@ package com.skhuring.mentoring.service;
 import com.skhuring.mentoring.dto.KakaoProfileDto;
 import com.skhuring.mentoring.dto.OAuthTokenDto;
 import com.skhuring.mentoring.dto.GoogleProfileDto;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class KakaoService {
 
