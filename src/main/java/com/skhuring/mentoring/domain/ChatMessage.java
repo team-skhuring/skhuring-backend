@@ -1,13 +1,11 @@
 package com.skhuring.mentoring.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,6 +27,7 @@ public class ChatMessage extends BaseTimeEntity {
     private String content;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MessageType messageType;
 
 }

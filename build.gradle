@@ -44,6 +44,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	/* aws s3 sdk 이미지 저장을 위함 */
+	implementation("software.amazon.awssdk:s3:2.20.132")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-websocket")
 }
 
 tasks.named('test') {

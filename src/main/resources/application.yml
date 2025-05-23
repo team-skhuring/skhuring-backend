@@ -24,7 +24,19 @@ kakao:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3000 #분단위
-
+cloud:
+  aws:
+    s3:
+      bucket: skhuring
+      path:
+        chat-image: chat-image
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}
 
 
 
