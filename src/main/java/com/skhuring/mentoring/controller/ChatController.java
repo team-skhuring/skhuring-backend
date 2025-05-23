@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/chat")
@@ -60,8 +61,11 @@ public ResponseEntity<?> getChatRoomsMe() {
     }
 //    채팅방 종료 - 방장
     @PostMapping("/close/{roomId}")
-    public ResponseEntity<?> closeChatRoom(@PathVariable @NotNull String roomId) {
-        chatService.closeChatRoom(Long.valueOf(roomId));
+    public ResponseEntity<?> closeChatRoom(
+            @PathVariable String roomId,
+            @RequestBody Map<String, Integer> body) {
+        Integer score = body.get("score");
+        chatService.closeChatRoom(Long.valueOf(roomId), score);
         return ResponseEntity.ok().body("채팅방이 종료되었습니다.");
     }
 //     채팅방 나가기 - 일반 사용자
@@ -74,6 +78,5 @@ public ResponseEntity<?> getChatRoomsMe() {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
-
 
 }

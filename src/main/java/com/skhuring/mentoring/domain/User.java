@@ -34,4 +34,9 @@ public class User {
     @Column(name = "profile_image")
     private String profileImage;
 
+    private int point;
+
+    public void addPoint(int score) {
+        this.point += score;
+    }
 }

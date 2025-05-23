@@ -171,21 +171,33 @@ public class ChatService {
     }
 
 
-    public void closeChatRoom(Long roomId) {
+    public void closeChatRoom(Long roomId, int score) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
 
-        User user = userRepository.findBySocialId(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        // 현재 요청한 사용자
+        User currentUser = userRepository.findBySocialId(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        ).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        if (!chatRoom.getCreator().getId().equals(user.getId())) {
+        // 방장 확인 (방장만 종료 가능)
+        if (!chatRoom.getCreator().getId().equals(currentUser.getId())) {
             throw new IllegalStateException("방 생성자만 종료할 수 있습니다.");
         }
 
-        // 종료 처리
-        chatRoom.closeRoom();
+        //  멘토 찾기
+        ChatParticipant mentorParticipant = chatParticipantRepository
+                .findByChatRoomIdAndChatRole(roomId, ChatRole.MENTOR)
+                .orElseThrow(() -> new EntityNotFoundException("멘토를 찾을 수 없습니다."));
+
+        User mentor = mentorParticipant.getUser();
+        mentor.addPoint(score);
+
+        // 저장
+        userRepository.save(mentor);
         chatRoomRepository.deleteById(roomId);
     }
+
 
     public void leaveChatRoom(Long roomId) {
         // 채팅방 찾기
