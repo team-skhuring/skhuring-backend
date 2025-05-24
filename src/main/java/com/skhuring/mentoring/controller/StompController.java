@@ -20,7 +20,7 @@ public class StompController {
     @MessageMapping("/{roomId}")
   //  @SendTo("/topic/{roomId}")
     public void sendMessage(@DestinationVariable String roomId, ChatMessageDto chatMessageReqDto) {
-        log.info("sendMessage: {}", chatMessageReqDto.toString());
+        log.info("Received messageType: {}", chatMessageReqDto.getMessageType());
         chatService.saveMessage(Long.valueOf(roomId), chatMessageReqDto);
         messageTemplate.convertAndSend("/topic/"+roomId, chatMessageReqDto);
     }

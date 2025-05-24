@@ -36,7 +36,7 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .user(user)
                 .content(chatMessageReqDto.getContent())
-                .messageType(MessageType.TEXT)
+                .messageType(chatMessageReqDto.getMessageType())
                 .build();
         chatMessageRepository.save(chatMessage);
 

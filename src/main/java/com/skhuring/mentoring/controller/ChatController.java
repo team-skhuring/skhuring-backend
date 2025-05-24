@@ -2,15 +2,18 @@ package com.skhuring.mentoring.controller;
 
 import com.skhuring.mentoring.dto.*;
 import com.skhuring.mentoring.service.ChatService;
+import com.skhuring.mentoring.service.S3Uploader;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,8 @@ import java.util.Map;
 @Slf4j
 public class ChatController {
     private final ChatService chatService;
+
+    private final S3Uploader s3Uploader;
 //    채팅방 개설
     @PostMapping("/room")
     public ResponseEntity<?> createChatRoom(@RequestBody CreateChatRoomReqDto request) {
@@ -77,6 +82,14 @@ public ResponseEntity<?> getChatRoomsMe() {
         } catch (Exception e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
+    }
+    @PostMapping("/upload/{roomId}")
+    public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) throws IOException {
+        String url = s3Uploader.upload(file);
+        Map<String, String> response = new HashMap<>();
+        response.put("messageType", "IMAGE");
+        response.put("url", url);
+        return ResponseEntity.ok(response);
     }
 
 }
