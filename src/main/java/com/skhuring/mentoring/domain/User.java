@@ -39,10 +39,10 @@ public class User {
 
     public void addPoint(int score) {
         this.point += score;
+    }
 
     public void update(String name, String profileImage) {
         this.name = name;
         this.profileImage = profileImage;
-
     }
 }
