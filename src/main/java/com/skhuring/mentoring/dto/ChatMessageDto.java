@@ -14,4 +14,5 @@ public class ChatMessageDto {
     private String content;
     private String sender;
     private MessageType messageType;
+    private String socialId;
 }

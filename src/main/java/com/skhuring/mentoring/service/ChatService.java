@@ -29,7 +29,7 @@ public class ChatService {
 //        채팅방조회
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(()-> new EntityNotFoundException("room cannot be found"));
 //        보낸사람조회
-        User user = userRepository.findByName(chatMessageReqDto.getSender()).orElseThrow(()-> new EntityNotFoundException("user cannot be found"));
+        User user = userRepository.findBySocialId(chatMessageReqDto.getSocialId()).orElseThrow(()-> new EntityNotFoundException("user cannot be found"));
 
 //        메시지저장
         ChatMessage chatMessage = ChatMessage.builder()
@@ -150,6 +150,8 @@ public class ChatService {
             ChatMessageDto chatMessageDto = ChatMessageDto.builder()
                     .content(c.getContent())
                     .sender(c.getUser().getName())
+                    .socialId(c.getUser().getSocialId())
+                    .messageType(c.getMessageType())
                     .build();
             dtos.add(chatMessageDto);
         }

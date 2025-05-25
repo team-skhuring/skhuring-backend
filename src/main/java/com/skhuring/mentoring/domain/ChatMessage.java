@@ -26,7 +26,7 @@ public class ChatMessage extends BaseTimeEntity {
     @Column(nullable = false, length = 500)
     private String content;
 
-    @Column(nullable = false)
+   // @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
 
