@@ -23,6 +23,6 @@ public class AIController {
     @PostMapping("/qa")
     public ResponseEntity<AIResDto> answerQuestion(@RequestBody AIReqDto AIReqDto) {
          // 사용자의 질문 전달
-        return ResponseEntity.ok(aiService.answerQuestion(AIReqDto.getQuestion()));
+        return ResponseEntity.ok(aiService.answerQuestion(AIReqDto.getSentence(), AIReqDto.getQuestion()));
     }
 }
