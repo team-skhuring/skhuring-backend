@@ -27,9 +27,7 @@ public class ChatRoom extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Category category;
-
-    @Column(nullable = false)
-    private boolean anonymous;
+    
 
     private static final int MAX_PARTICIPANTS = 4;
 

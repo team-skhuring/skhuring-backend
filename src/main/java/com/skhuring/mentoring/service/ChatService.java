@@ -8,6 +8,7 @@ import com.skhuring.mentoring.repository.ChatRoomRepository;
 import com.skhuring.mentoring.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @AllArgsConstructor
@@ -31,18 +33,24 @@ public class ChatService {
 //        보낸사람조회
         User user = userRepository.findBySocialId(chatMessageReqDto.getSocialId()).orElseThrow(()-> new EntityNotFoundException("user cannot be found"));
 
+        ChatParticipant participant = chatParticipantRepository.findByChatRoomAndUser(chatRoom, user)
+                .orElseThrow(() -> new EntityNotFoundException("participant not found"));
+
+        log.info("participant is {}, {}", participant.getId() , participant.getChatRole());
 //        메시지저장
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .user(user)
                 .content(chatMessageReqDto.getContent())
                 .messageType(chatMessageReqDto.getMessageType())
+                .chatRole(participant.getChatRole())
                 .build();
         chatMessageRepository.save(chatMessage);
 
     }
 
     public Long createRoom(CreateChatRoomReqDto request) {
+
         Category categoryEnum;
         try {
             categoryEnum = Category.valueOf(request.getCategory().toUpperCase());
@@ -55,7 +63,6 @@ public class ChatService {
                 .title(request.getTitle())
                 .category(categoryEnum)
                 .creator(user)
-                .anonymous(request.isAnonymous())
                 .currentMemberCount(1)
                 .mentor_status(false)
                 .build();
@@ -152,6 +159,7 @@ public class ChatService {
                     .sender(c.getUser().getName())
                     .socialId(c.getUser().getSocialId())
                     .messageType(c.getMessageType())
+                    .chatRole(c.getChatRole())
                     .build();
             dtos.add(chatMessageDto);
         }
@@ -227,4 +235,15 @@ public class ChatService {
         }
     }
 
+    public void markMessagesAsRead(Long roomId, Long userId) {
+        List<ChatMessage> unreadMessages = chatMessageRepository.findUnreadMessages(roomId, userId);
+        for (ChatMessage msg : unreadMessages) {
+            msg.getReaders().add(userId);
+        }
+        chatMessageRepository.saveAll(unreadMessages);
+    }
+
+    public List<ChatRoomWithUnreadDto> getChatRoomsWithUnreadCounts(Long userId) {
+        return chatMessageRepository.findChatRoomsWithUnreadCountAndRecentMessage(userId);
+    }
 }
