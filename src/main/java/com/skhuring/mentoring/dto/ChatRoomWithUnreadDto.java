@@ -2,12 +2,12 @@ package com.skhuring.mentoring.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class CreateChatRoomReqDto {
+public class ChatRoomWithUnreadDto {
+    private Long roomId;
     private String title;
-    private String category;
+    private String recentMessage;
+    private Long unreadCount;
 }

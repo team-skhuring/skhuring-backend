@@ -48,6 +48,7 @@ public class UserController {
         loginInfo.put("id", originalMember.getId());
         loginInfo.put("token", jwtToken);
         loginInfo.put("name", originalMember.getName());
+        loginInfo.put("socialId", originalMember.getSocialId());
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);
     }
 
@@ -85,6 +86,7 @@ public class UserController {
         loginInfo.put("id", originalMember.getId());
         loginInfo.put("token", jwtToken);
         loginInfo.put("name", originalMember.getName());
+        loginInfo.put("socialId", originalMember.getSocialId());
 
         return new ResponseEntity<>(loginInfo, HttpStatus.OK);
     }

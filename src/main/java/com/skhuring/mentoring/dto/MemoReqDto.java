@@ -14,5 +14,5 @@ public class MemoReqDto {
     private Long chatRoomId;
     private String title;
     private String content;
-    private Long userId;
+    private String socialId;
 }

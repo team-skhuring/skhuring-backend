@@ -3,6 +3,9 @@ package com.skhuring.mentoring.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Builder
 @Setter
@@ -26,8 +29,16 @@ public class ChatMessage extends BaseTimeEntity {
     @Column(nullable = false, length = 500)
     private String content;
 
-    @Column(nullable = false)
+   // @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
+
+    @ElementCollection
+    @CollectionTable(name = "chat_message_readers", joinColumns = @JoinColumn(name = "chat_message_id"))
+    @Column(name = "user_id")
+    private Set<Long> readers = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private ChatRole chatRole;
 
 }

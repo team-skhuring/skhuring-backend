@@ -91,5 +91,18 @@ public ResponseEntity<?> getChatRoomsMe() {
         response.put("url", url);
         return ResponseEntity.ok(response);
     }
+//    메시지 읽음 처리 api
+    @PostMapping("/chatrooms/{roomId}/read")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long roomId, @RequestParam Long userId) {
+        chatService.markMessagesAsRead(roomId, userId);
+        return ResponseEntity.ok().build();
+    }
+//   채팅방 목록 조회 시 각방에 있는 안읽은 메시지 개수 함께 반환
+    @GetMapping("/with-unread")
+    public ResponseEntity<List<ChatRoomWithUnreadDto>> getChatRoomsWithUnread(@RequestParam Long userId) {
+        List<ChatRoomWithUnreadDto> chatRooms = chatService.getChatRoomsWithUnreadCounts(userId);
+        return ResponseEntity.ok(chatRooms);
+    }
+
 
 }

@@ -39,8 +39,8 @@ public class MemoService {
 
     /* 입장한 채팅방 ID 에 따른 메모 생성 */
     public void createMemo(MemoReqDto dto) {
-        Long userId = dto.getUserId();
-        User user = userRepository.findById(userId)
+        String socialId = dto.getSocialId();
+        User user = userRepository.findBySocialId(String.valueOf(socialId))
                 .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
 
         Memo memo = Memo.builder()
