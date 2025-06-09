@@ -19,12 +19,12 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final StompHandler stompHandler;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/connect")
-                .setAllowedOrigins("http://localhost:5173")
+        registry.addEndpoint("/api/connect")
+                .setAllowedOriginPatterns("*")
+                //.setAllowedOrigins("http://localhost:5173") // 로컬용
                 .withSockJS();
-
-
     }
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
 //        /publish/1 형태로 메시지 발행
