@@ -21,7 +21,8 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+//@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor // 생성자 자동 생성 Lombok 어노테이션
 public class UserController {
     private final UserService userService;

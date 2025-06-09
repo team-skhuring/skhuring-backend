@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/chat")
+//@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 @AllArgsConstructor
 @Slf4j
 public class ChatController {

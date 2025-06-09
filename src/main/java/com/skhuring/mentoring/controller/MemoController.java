@@ -13,7 +13,8 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/memo")
+//@RequestMapping("/memo")
+@RequestMapping("/api/memo")
 @RequiredArgsConstructor
 public class MemoController {
     private final MemoService memoService;

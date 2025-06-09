@@ -15,7 +15,7 @@ public class AIService {
 
     /* 사용자의 질문을 AI 에게 답변 요청 보내기 */
     public AIResDto answerQuestion(String sentence, String question) {
-        String prompt = sentence + "\n해당 문장을 바탕으로 다음 질문에 답변. " + question;
+        String prompt = sentence + "\n해당 문장을 바탕으로 다음 질문에 짧게 답변. " + question;
         String result = clovaClient.callClovaChat(prompt);
         return AIResDto.builder()
                 .answer(result)
