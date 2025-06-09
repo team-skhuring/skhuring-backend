@@ -29,7 +29,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a->a.requestMatchers("/ai/**", "/memo/**", "/user/google/doLogin", "/user/kakao/doLogin", "/oauth2/**", "/connect/**").permitAll().anyRequest().authenticated())
+                //.authorizeHttpRequests(a->a.requestMatchers("/user/google/doLogin", "/user/kakao/doLogin", "/oauth2/**", "/connect/**").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(a->a.requestMatchers("/api/user/google/doLogin", "/api/user/kakao/doLogin", "/oauth2/**", "/connect/**").permitAll().anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
