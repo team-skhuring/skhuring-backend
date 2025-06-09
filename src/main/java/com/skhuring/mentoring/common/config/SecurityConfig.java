@@ -34,7 +34,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ preflight 허용
                         .requestMatchers(HttpMethod.POST, "/api/user/kakao/doLogin").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/google/doLogin").permitAll()
-                        .requestMatchers("/oauth2/**", "/connect/**").permitAll()
+                        .requestMatchers("/oauth2/**", "/api/connect/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
