@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ preflight 허용
                         .requestMatchers(HttpMethod.POST, "/api/user/kakao/doLogin").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/google/doLogin").permitAll()
                         .requestMatchers("/oauth2/**", "/connect/**").permitAll()
