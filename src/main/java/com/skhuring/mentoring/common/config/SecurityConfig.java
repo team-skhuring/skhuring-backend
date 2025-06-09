@@ -5,6 +5,7 @@ import com.skhuring.mentoring.common.auth.JwtTokenProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,9 +29,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                //.authorizeHttpRequests(a->a.requestMatchers("/user/google/doLogin", "/user/kakao/doLogin", "/oauth2/**", "/connect/**").permitAll().anyRequest().authenticated())
-                .authorizeHttpRequests(a->a.requestMatchers("/api/user/google/doLogin", "/api/user/kakao/doLogin", "/oauth2/**", "/connect/**").permitAll().anyRequest().authenticated())
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(a -> a
+                        .requestMatchers(HttpMethod.POST, "/api/user/kakao/doLogin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/google/doLogin").permitAll()
+                        .requestMatchers("/oauth2/**", "/connect/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
